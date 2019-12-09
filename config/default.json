@@ -1,0 +1,3 @@
+{
+  "mongoURI": "mongodb+srv://user:user@hypertube-re3ev.mongodb.net/test?retryWrites=true&w=majority"
+}
