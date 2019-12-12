@@ -28,7 +28,7 @@ router.get('/me', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/profile
+// @route  POST api/profile
 // @desc   Create or update user's profile
 // @access Private
 router.post('/', auth, async (request, response) => {
@@ -68,6 +68,56 @@ router.post('/', auth, async (request, response) => {
         profile = new Profile(profileFields);
         await profile.save();
         response.json(profile);
+    } catch (err) {
+        console.error(err.message);
+        response.status(500).send('Server error');
+    }
+});
+
+// @route  GET api/profile
+// @desc   Get all profiles
+// @access Public
+router.get('/', async (request, response) => {
+    try {
+        const profiles = await Profile.find().populate('user', ['firstName', 'lastName', 'login', 'avatar']);
+        response.json(profiles);
+    } catch (err) {
+        console.error(err.message);
+        response.status(500).send('Server error');
+    }
+});
+
+// @route  GET api/profile/:user_id
+// @desc   Get profile by user_id
+// @access Public
+router.get('/:user_id', async (request, response) => {
+    try {
+        const profile = await Profile.findOne({
+            user: request.params.user_id
+        }).populate('user', ['firstName', 'lastName', 'login', 'avatar']);
+
+        if (!profile) {
+            return response.status(404).json({ msg: 'Profile not found' });
+        }
+        response.json(profile);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return response.status(404).json({ msg: 'Profile not found' });
+        }
+
+        response.status(500).send('Server error');
+    }
+});
+
+// @route  DELETE api/profile
+// @desc   Delete profile and user
+// @access Private
+router.delete('/', auth, async (request, response) => {
+    try {
+        await Profile.findOneAndRemove({ user: request.user.id });
+        await User.findOneAndRemove({ _id: request.user.id });
+        response.json({ msg: 'User was deleted' });
     } catch (err) {
         console.error(err.message);
         response.status(500).send('Server error');
