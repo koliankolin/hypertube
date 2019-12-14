@@ -108,4 +108,92 @@ router.delete('/:film_id', auth, async (request, response) => {
     }
 });
 
+// @route  PUT api/films/like/:film_id
+// @desc   Add like to film
+// @access Private
+router.put('/like/:film_id', auth, async (req, res) => {
+    try {
+        const film = await Film.findById(req.params.film_id);
+        const countLikesByUser = film.likes.filter(like => like.user.toString() === req.user.id).length;
+        if (film) {
+            if (countLikesByUser > 0) {
+                const removeIndexLike = film.likes.map(like => like.user.toString()).indexOf(req.user.id);
+                film.likes.splice(removeIndexLike, 1);
+            } else if (countLikesByUser === 0) {
+                film.likes.unshift({ user: req.user.id });
+            }
+        }
+        await film.save();
+
+        res.json(film.likes);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// @route  POST api/films/comment/:film_id
+// @desc   Create a comment to film
+// @access Private
+router.post('/comment/:film_id', [
+    auth,
+    [
+        check('text', 'Text is required').not().isEmpty()
+    ]
+], async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const body = request.body;
+        const user = await User.findById(request.user.id);
+        const film = await Film.findById(request.params.film_id);
+
+        const newComment = {
+            user: request.user.id,
+            text: body.text,
+            authorName: user.login,
+            authorAvatar: user.avatar,
+        };
+
+        film.comments.unshift(newComment);
+        await film.save();
+        response.json(film.comments);
+    } catch (err) {
+        console.error(err.message);
+        response.status(500).send('Server error');
+    }
+});
+
+// @route  DELETE api/films/comment/:film_id/:comment_id
+// @desc   Delete comment
+// @access Private
+router.delete('/comment/:film_id/:comment_id', auth, async (req, res) => {
+   try {
+       const film = await Film.findById(req.params.film_id);
+       const comment = film.comments.find(comment => comment.id === req.params.comment_id);
+
+       if (!comment) {
+           return res.status(404).json({ msg: 'Comment does not exist' });
+       }
+
+       // Check user is authorized
+       if (comment.user.toString() !== req.user.id) {
+           return res.status(403).json({ msg: 'User is not authorized' });
+       }
+
+       const removeIndexComment = film.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
+       film.comments.splice(removeIndexComment, 1);
+
+       await film.save();
+       res.json(film.comments);
+   } catch (err) {
+       console.error(err.message);
+       res.status(500).send('Server error');
+   }
+});
+
+
 module.exports = router;
