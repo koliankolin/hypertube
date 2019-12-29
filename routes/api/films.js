@@ -93,7 +93,7 @@ router.get('/search', auth, async (req, res) => {
         const filmsFromDb = await Film.find({ title: { $regex: '.*' + filmName + '.*', $options: 'i' } });
         if (filmsFromDb.length === 0) {
             const filmsFromApi = await parser.getSearch(filmName);
-            filmsFromApi.forEach(film => utilities.convertApiFilmToDbFilm(film).save());
+            filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
             return res.json(filmsFromApi);
         }
         return res.json(filmsFromDb);
@@ -110,11 +110,9 @@ router.get('/popular', auth, async (req, res) => {
        let result = [];
        const page = req.query.page;
        const filmsFromApi = await parser.getPopular(page);
-       filmsFromApi.forEach((filmFromApi) => {
-           let filmFromDb = Film.find({ title: { $regex: '.*' + filmFromApi.title + '.*', $options: 'i' } });
-           // console.log(filmFromDb.length);
-           // return;
-           if (!filmFromDb) {
+       for (let filmFromApi of filmsFromApi) {
+           const filmFromDb = await Film.findOne({ title: { $regex: '.*' + filmFromApi.title + '.*', $options: 'i' } });
+           if (filmFromDb.length === 0) {
                let filmToSave = utilities.convertApiFilmToDbFilm(filmFromApi);
 
                result.push(filmToSave);
@@ -122,7 +120,7 @@ router.get('/popular', auth, async (req, res) => {
            } else {
                result.push(filmFromDb);
            }
-       });
+       }
        return res.json(result);
    } catch (err) {
        res.json({ msg: err.message });
