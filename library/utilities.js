@@ -59,9 +59,7 @@ exports.checkInfo = async function(type, str, str2) {
     return (error);
 };
 
-exports.sendMail = async function(type, email, username, token, lang) {
-    if (email && type === "forget")
-    {
+exports.sendMailChangePassword = async function(email, username, lang) {
         if (lang === 'eng') {
             transporter.sendMail({
                 from: '"Hypertube" Hypertube@hypertube.com',
@@ -71,8 +69,7 @@ exports.sendMail = async function(type, email, username, token, lang) {
                     + "It happens to everyone to forget his password.\n"
                     + "Go, click on this link or copy it in the search bar,\n"
                     + "and here we go again for the fantastic stream,\n"
-                    + `http://localhost:3000/motdepasse/${token}`
-                //	+ `http://localhost:3001/motdepasse/${token}`
+                    + `http://localhost:3000/motdepasse`
             }, (err, info) => {
                 if (process.env.MODE === 'DEV')
                     if (err)
@@ -87,28 +84,26 @@ exports.sendMail = async function(type, email, username, token, lang) {
                     + "Ça arrive à tout le monde d'oublier son mot de passe.\n"
                     + "Allez, clique sur ce lien ou copie le dans la barre de recherche,\n"
                     + "Et c'est reparti pour du super stream,\n"
-                    + `http://localhost:3000/motdepasse/${token}`
-                //+ `http://localhost:3001/motdepasse/${token}`
+                    + `http://localhost:3000/motdepasse`
             }, (err, info) => {
                 if (process.env.MODE === 'DEV')
                     if (err)
                         console.error(err);
             });
         }
-    } else if (email && type === "activate") {
-        transporter.sendMail({
-            from: '"Hypertube" Hypertube@hypertube.com',
-            to: email,
-            subject: 'Activating your account for Hypertube',
-            text: `Hello ${username},\n`
-                + "Click on this link or copy it in the search bar,\n"
-                + "to connect and enjoy Hypertube!\n"
-                + `http://localhost:3000/activer/${token}`
-            //	+ `http://localhost:3001/activer/${token}`
-        }, (err, info) => {
-            if (process.env.MODE === 'DEV')
-                if (err)
-                    console.error(err);
-        });
-    }
+};
+module.exports.sendEmailRegister = async function (email, username) {
+    transporter.sendMail({
+        from: '"Hypertube" Hypertube@hypertube.com',
+        to: email,
+        subject: 'Activating your account for Hypertube',
+        text: `Hello ${username},\n`
+            + "Click on this link or copy it in the search bar,\n"
+            + "to connect and enjoy Hypertube!\n"
+            + `http://localhost:3000/activer/`
+    }, (err, info) => {
+        if (process.env.MODE === 'DEV')
+            if (err)
+                console.error(err);
+    });
 };

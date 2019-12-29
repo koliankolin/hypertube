@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const auth = require('../../middleware/auth');
+const sendEmailPassword = require('../../middleware/send_mail_password');
+const sendEmailRegister = require('../../middleware/send_mail_register');
 const utilities = require('../../library/utilities');
 
 const {check, validationResult} = require('express-validator');
@@ -15,6 +17,7 @@ const User = require('../../models/User');
 // @desc   Register user
 // @access Public
 router.post('/', [
+    sendEmailRegister,
     check('firstName', 'First name is required').not().isEmpty(),
     check('lastName', 'Last name is required').not().isEmpty(),
     check('login', 'Login name is required').not().isEmpty(),
@@ -88,7 +91,7 @@ router.post('/', [
 // @route  POST api/users/password/change
 // @desc   Change password
 // @access Private
-router.post('/password/change', auth, async (req, res) => {
+router.post('/password/change', [auth, sendEmailPassword], async (req, res) => {
     let err = [];
     const { password, cfpassword } = req.body;
     err.push({
