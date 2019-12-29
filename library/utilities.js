@@ -1,10 +1,14 @@
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
-    sendmail: true,
-    newline: 'unix',
-    path: '/usr/sbin/sendmail'
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // upgrade later with STARTTLS
+    auth: {
+        user: "stanislav.gorchakov.1@gmail.com",
+        pass: "koliankolin"
+    }
 });
-var User = require('../models/User');
+const User = require('../models/User');
 
 //FUNCTIONS VALIDATE INPUT BEFORE CHECK MONGOOSE
 exports.checkInfo = async function(type, str, str2) {

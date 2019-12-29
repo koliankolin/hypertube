@@ -3,8 +3,12 @@ const User = require('../models/User');
 
 module.exports = async function (req, res, next) {
   // get user's email  and send letter
-    const user = await User.findById(req.user.id);
+    try {
+        const user = await User.findById(req.user.id);
 
-    await utilities.sendMailChangePassword(user.email, user.login, user.lang);
-    next();
+        await utilities.sendMailChangePassword(user.email, user.login, user.lang);
+        next();
+    } catch (err) {
+        res.json({ msg: err.message })
+    }
 };

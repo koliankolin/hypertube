@@ -29,7 +29,7 @@ router.post('/', [
         return response.status(400).json({ errors: errors.array() });
     }
 
-    const {firstName, lastName, login, email, password} = request.body;
+    const {firstName, lastName, login, email, password, lang} = request.body;
     
     try {
         // See if user exists
@@ -54,7 +54,8 @@ router.post('/', [
            login,
            email,
            password,
-           avatar
+           avatar,
+           lang
         });
 
         // Encrypt password
