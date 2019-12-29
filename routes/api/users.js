@@ -92,7 +92,7 @@ router.post('/', [
 // @route  POST api/users/password/change
 // @desc   Change password
 // @access Private
-router.post('/password/change', [auth, sendEmailPassword], async (req, res) => {
+router.post('/password/change', auth, async (req, res) => {
     let err = [];
     const { password, cfpassword } = req.body;
     err.push({
@@ -127,6 +127,17 @@ router.post('/password/change', [auth, sendEmailPassword], async (req, res) => {
             });
     } else
         return res.send({error : err})
+});
+
+// @route  POST api/users/password/email
+// @desc   Send email to change password
+// @access Private
+router.post('/password/email', [auth, sendEmailPassword], async (req, res) => {
+    try {
+        res.json({ status: "ok" });
+    } catch (err) {
+        res.json({ msg: err.message });
+    }
 });
 
 module.exports = router;
