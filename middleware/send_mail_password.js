@@ -7,6 +7,8 @@ module.exports = async function (req, res, next) {
         const user = await User.findById(req.user.id);
 
         await utilities.sendMailChangePassword(user.email, user.login, user.lang);
+        console.log(user.email, user.login);
+        console.log('Email was sent');
         next();
     } catch (err) {
         res.json({ msg: err.message })
