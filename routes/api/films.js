@@ -102,6 +102,33 @@ router.get('/search', auth, async (req, res) => {
     }
 });
 
+// @route  GET api/films/popular?page=
+// @desc   Get popular films
+// @access Private
+router.get('/popular', auth, async (req, res) => {
+   try {
+       let result = [];
+       const page = req.query.page;
+       const filmsFromApi = await parser.getPopular(page);
+       filmsFromApi.forEach((filmFromApi) => {
+           let filmFromDb = Film.find({ title: { $regex: '.*' + filmFromApi.title + '.*', $options: 'i' } });
+           // console.log(filmFromDb.length);
+           // return;
+           if (!filmFromDb) {
+               let filmToSave = utilities.convertApiFilmToDbFilm(filmFromApi);
+
+               result.push(filmToSave);
+               filmToSave.save();
+           } else {
+               result.push(filmFromDb);
+           }
+       });
+       return res.json(result);
+   } catch (err) {
+       res.json({ msg: err.message });
+   }
+});
+
 // @route  DELETE api/films/:film_id
 // @desc   Delete film by film_id
 // @access Private

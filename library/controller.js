@@ -1,26 +1,26 @@
 const scrapper = require('./parser');
 const axios = require('axios');
 
-async function getLastAdded(req, res) {
-    let page = req.query.page || 1;
+async function getLastAdded(page) {
+    page = page || 1;
     try {
         let scrap = await scrapper.fetchAPI('lastadded', page);
         scrap = filterScrap(scrap);
         scrap = await mapScrap(scrap);
-        res.send(scrap);
+        return scrap;
     } catch (err) {
         if (process.env.MODE === 'DEV')
             console.error(err);
         res.sendStatus(204);
     }
 }
-async function getPopular(req, res) {
-    let page = req.query.page || 1;
+async function getPopular(page) {
+    page = page || 1;
     try {
         let scrap = await scrapper.fetchAPI('popular', page);
         scrap = filterScrap(scrap);
         scrap = await mapScrap(scrap);
-        res.send(scrap);
+        return scrap;
     } catch (err) {
         if (process.env.MODE === 'DEV')
             console.error(err);
