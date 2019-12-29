@@ -39,14 +39,14 @@ async function getRandom(req, res) {
         res.sendStatus(204);
     }
 }
-async function getSearch(req, res) {
-    let str = req.query.name || '42';
+async function getSearch(filmName) {
+    filmName = filmName || '42';
     try {
-        let scrap = await scrapper.fetchAPI('search', 1, str);
+        let scrap = await scrapper.fetchAPI('search', 1, filmName);
         scrap = filterScrap(scrap);
         scrap = await mapScrap(scrap);
         scrap = scrap.sort(sortByName);
-        res.send(scrap);
+        return scrap;
     } catch (err) {
         if (process.env.MODE === 'DEV')
             console.error(err);

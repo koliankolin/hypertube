@@ -6,6 +6,8 @@ const auth = require('../../middleware/auth');
 const User = require('../../models/User');
 const Profile = require('../../models/Profile');
 const Film = require('../../models/Film');
+const parser = require('../../library/controller');
+const utilities = require('../../library/utilities');
 
 // @route  POST api/films
 // @desc   Create film
@@ -60,10 +62,10 @@ router.get('/', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/films/:film_id
+// @route  GET api/films/id/:film_id
 // @desc   Get film by film_id
 // @access Private
-router.get('/:film_id', auth, async (request, response) => {
+router.get('/id/:film_id', auth, async (request, response) => {
     try {
         const film = await Film.findOne({ _id: request.params.film_id });
 
@@ -79,6 +81,24 @@ router.get('/:film_id', auth, async (request, response) => {
         }
 
         response.status(500).send('Server error');
+    }
+});
+
+// @route  GET api/films/search?name=
+// @desc   Search film by name
+// @access Private
+router.get('/search', auth, async (req, res) => {
+    try {
+        const filmName = req.query.name;
+        const filmsFromDb = await Film.find({ title: { $regex: '.*' + filmName + '.*', $options: 'i' } });
+        if (filmsFromDb.length === 0) {
+            const filmsFromApi = await parser.getSearch(filmName);
+            filmsFromApi.forEach(film => utilities.convertApiFilmToDbFilm(film).save());
+            return res.json(filmsFromApi);
+        }
+        return res.json(filmsFromDb);
+    } catch (err) {
+        res.json({ msg: err.message });
     }
 });
 

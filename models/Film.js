@@ -28,18 +28,42 @@ const FilmSchema = new mongoose.Schema({
             }
         }
     ],
+    rating_imdb: {
+        type: String
+    },
     description: {
         type: String,
         required: true
     },
     link: {
-        type: String,
-        required: true
+        type: String
     },
     photo: {
         type: String,
         required: true
     },
+    torrents: [
+        {
+            quality: {
+                type: String
+            },
+            lang: {
+                type: String
+            },
+            seeds: {
+                type: Number
+            },
+            peers: {
+                type: Number
+            },
+            size: {
+                type: String
+            },
+            hash: {
+                type: String
+            }
+        }
+    ],
     likes: [
         {
             user: {

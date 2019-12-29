@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const Film = require('../models/Film');
+
 const transporter = nodemailer.createTransport({
     pool: true,
     host: "smtp.gmail.com",
@@ -111,4 +113,17 @@ module.exports.sendEmailRegister = async function (email, username) {
             if (err)
                 console.error(err);
     });
+};
+
+module.exports.convertApiFilmToDbFilm = function (filmApi) {
+    const {title, year, synopsis, image, genre, ratings, torrents } = filmApi;
+    return new Film({
+        title: title,
+        type: genre,
+        year: year,
+        rating_imdb: ratings.Value,
+        description: synopsis,
+        photo: image,
+        torrents: torrents
+    })
 };
