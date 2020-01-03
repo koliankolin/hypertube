@@ -110,6 +110,26 @@ router.get('/:user_id', async (request, response) => {
     }
 });
 
+// @route  GET api/profile/login/:login
+// @desc   Get profile by login
+// @access Public
+router.get('/login/:login', async (req, res) => {
+    try {
+        const login = req.params.login;
+        const user = await User.findOne({login: login});
+
+        const profile = await Profile.findOne({user: user.id})
+            .populate('user', ['firstName', 'lastName', 'login', 'avatar']);
+        if (profile) {
+            return res.json(profile);
+        } else {
+            return res.json({ msg: 'User with that login not found' });
+        }
+    } catch (err) {
+        res.json({ msg: err.message });
+    }
+});
+
 // @route  DELETE api/profile
 // @desc   Delete profile and user
 // @access Private
