@@ -102,10 +102,26 @@ router.get('/search', auth, async (req, res) => {
     }
 });
 
-// @route  GET api/films/popular?page=
+// @route  GET api/films/popular?page=limit=
 // @desc   Get popular films
 // @access Private
 router.get('/popular', auth, async (req, res) => {
+  try {
+      const limit = parseInt(req.query.limit) || 50;
+      const page = parseInt(req.query.page) || 1;
+
+      const filmsFromDb = await Film.find().sort({ date: -1 }).skip(limit * page).limit(limit);//.limit(limit);//.find('',{},{ skip: limit * page, limit: limit });
+      console.log(filmsFromDb.length);
+      return res.json(filmsFromDb);
+  } catch (err) {
+      res.json({ msg: err.message });
+  }
+});
+
+// @route  GET api/films/popular?page=
+// @desc   Get popular films
+// @access Private
+router.get('/popular/download', auth, async (req, res) => {
    try {
        let result = [];
        const page = req.query.page;
