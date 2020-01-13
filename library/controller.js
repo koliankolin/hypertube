@@ -125,6 +125,9 @@ function mapTorrent(torrents, lang) {
         torrents.forEach(e => {
             if (e.quality !== '3D')
                 tmp.push({
+                    url: e.url,
+                    imdb: e.imdb_code,
+                    magnet: e.magnet,
                     quality: e.quality,
                     lang: lang,
                     seeds: e.seeds,
@@ -143,12 +146,15 @@ function mapTorrent(torrents, lang) {
             qualities.forEach(f => {
                 data = torrents[e][f];
                 tmp.push({
+                    url: data.url,
+                    imdb: data.imdb_code,
+                    magnet: data.magnet,
                     quality: f,
                     lang: e,
                     seeds: data.seed,
                     peers: data.peer,
                     size: data.filesize,
-                    magnet: data.url
+                    hash: data.hash
                 });
             });
         });

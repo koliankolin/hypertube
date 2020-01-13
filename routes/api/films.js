@@ -128,7 +128,7 @@ router.get('/popular/download', auth, async (req, res) => {
        const filmsFromApi = await parser.getPopular(page);
        for (let filmFromApi of filmsFromApi) {
            const filmFromDb = await Film.findOne({ title: { $regex: '.*' + filmFromApi.title + '.*', $options: 'i' } });
-           if (filmFromDb.length === 0) {
+           if (filmFromDb === null || filmFromDb.length === 0) {
                let filmToSave = utilities.convertApiFilmToDbFilm(filmFromApi);
 
                result.push(filmToSave);

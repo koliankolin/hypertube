@@ -116,8 +116,9 @@ module.exports.sendEmailRegister = async function (email, username) {
 };
 
 module.exports.convertApiFilmToDbFilm = function (filmApi) {
-    const {title, year, synopsis, image, genre, ratings, torrents } = filmApi;
+    const {imdb, title, year, synopsis, image, genre, ratings, torrents } = filmApi;
     return new Film({
+        imdb_code: imdb,
         title: title,
         type: genre,
         year: year,

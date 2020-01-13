@@ -4,6 +4,9 @@ const FilmSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
     },
+    imdb_code: {
+        type: String
+    },
     title: {
         type: String,
         required: true
@@ -44,6 +47,12 @@ const FilmSchema = new mongoose.Schema({
     },
     torrents: [
         {
+            url: {
+                type: String
+            },
+            magnet: {
+                type: String
+            },
             quality: {
                 type: String
             },
