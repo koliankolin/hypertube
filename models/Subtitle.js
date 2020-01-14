@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const SubtitleSchema = new mongoose.Schema({
-    movie_imdb: { type: String, require: true, unique: true },
+    imdb_code: { type: String, require: true, unique: true },
     files: [
         {
             path: String,

@@ -10,12 +10,12 @@ const Sub = require('../models/Subtitle');
 //AND DOWNLOAD/CONVERT THEM ON SERV
 async function searchSub(req, res) {
     let { imdb } = req.query;
-    if (/^tt/.test(imdb))
-        imdb = imdb.slice(2);
+    if (!(/^tt/.test(imdb)))
+        return res.json({ msg: 'Invalid imdb number' });
     try {
-        let dbRes = await Sub.findOne({ movie_imdb: imdb}).exec();
+        let dbRes = await Sub.findOne({ imdb_code: imdb});
         if (dbRes && dbRes.files && dbRes.files.length > 0)
-            return res.send(dbRes.files);
+            return res.json(dbRes);
     } catch (err) {
         if (process.env.MODE === 'DEV')
             console.error(err);
@@ -24,7 +24,7 @@ async function searchSub(req, res) {
 
     let sendres = 0;
     let newSub = new Sub({
-        movie_imdb: imdb,
+        imdb_code: imdb,
         files: []
     });
 
@@ -33,7 +33,7 @@ async function searchSub(req, res) {
         {
             if (sub === 'fr' && freSub[1])
                 return dlUnzipConvert(freSub[1].SubDownloadLink,
-                    imdb, 'fr', gogoRes)
+                    imdb, 'fr', gogoRes);
             else if (sub === 'eng' && engSub[1])
                 return dlUnzipConvert(engSub[1].SubDownloadLink,
                     imdb, 'eng', gogoRes)
