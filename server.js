@@ -17,6 +17,7 @@ app.use('/api/films', require('./routes/api/films'));
 app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/parser', require('./routes/api/parser'));
 app.use('/api/subtitles', require('./routes/api/subtitles'));
+app.use('/api/translate', require('./routes/api/translate'));
 
 const PORT = process.env.PORT || 5000;
 
