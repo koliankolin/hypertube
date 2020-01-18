@@ -84,21 +84,38 @@ router.get('/id/:film_id', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/films/search?name=
+// @route  GET api/films/search?name=&genre=action,drama&yearPeriod=2010,2014
 // @desc   Search film by name
 // @access Private
 router.get('/search', auth, async (req, res) => {
     try {
-        const filmName = req.query.name;
-        const filmsFromDb = await Film.find({ title: { $regex: '.*' + filmName + '.*', $options: 'i' } });
-        if (filmsFromDb.length === 0) {
-            const filmsFromApi = await parser.getSearch(filmName);
-            filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
-            return res.json(filmsFromApi);
+        let { name, genre, yearPeriod }  = req.query;
+        let yearRange = Array();
+        yearPeriod = yearPeriod.toString().split(',');
+        const yearFrom = parseInt(yearPeriod[0]);
+        const yearTo = parseInt(yearPeriod[1]);
+        for (let i = yearFrom; i <= yearTo; i++) {
+            yearRange.push(i);
         }
-        return res.json(filmsFromDb);
+        const titleCondition = name ? { $regex: '.*' + name.toString() + '.*', $options: 'i' } : { $regex: '.*', $options: 'i' };
+        console.log(genre.toString().split(','));
+        const filmsFromDb = await Film.find({
+            title: titleCondition,
+            type: { $in: genre.toString().split(',') },
+            year: { $in: yearRange }
+        }).sort({ date: -1 });
+        if (filmsFromDb.length === 0) {
+            const filmsFromApi = await parser.getSearch(name);
+            filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
+            // return res.json(filmsFromApi);
+        }
+        return res.json(await Film.find({
+            title: titleCondition,
+            // type: { $in: genre.toString().split(',') },
+            year: { $in: yearRange }
+        }).sort({ date: -1 }));
     } catch (err) {
-        res.json({ msg: err.message });
+        await res.json({ msg: err.message });
     }
 });
 
