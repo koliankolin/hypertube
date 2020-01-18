@@ -1,5 +1,9 @@
 {
   "mongoURI": "mongodb+srv://user:user@hypertube-re3ev.mongodb.net/test?retryWrites=true&w=majority",
   "jwtSecret": "mytoken",
-  "translate": "trnsl.1.1.20180616T122250Z.c07944373405f90e.931aca9ffc6d0048d5adc4878a570ffc76ad9cf2"
-}
+  "translate": "trnsl.1.1.20180616T122250Z.c07944373405f90e.931aca9ffc6d0048d5adc4878a570ffc76ad9cf2",
+  "APP_ID_42": "c80e346f9356061e8abef0a250cfecab7e5aad64c745006cdfd362a6974a0f52",
+  "APP_SECRET_42": "a9e4dc9c0e7b1886e5495095fa7884e0f6d1d6e7d1fbf347de1c6f2a7624b4f6",
+  "APP_ID_INSTA": "359fea48a2dd4a049460a526a7a18386",
+  "APP_SECRET_INSTA": "1396b5b6b6c34dba9b76d910fcdcb197"
+ }
