@@ -84,11 +84,14 @@ router.get('/id/:film_id', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/films/search?name=matrix&sortBy=name&genre=action,drama&yearPeriod=2010,2014
+// @route  GET api/films/search?name=matrix&sortBy=name&genre=action,drama&yearPeriod=2010,2014&limit=50&page=1
 // @desc   Search film by name
 // @access Private
 router.get('/search', auth, async (req, res) => {
     try {
+        const limit = parseInt(req.query.limit) || 50;
+        const page = parseInt(req.query.page) || 1;
+
         let { name, sortBy, genre, yearPeriod }  = req.query;
         sortBy = sortBy || 'name';
         let yearRange = Array();
@@ -108,13 +111,13 @@ router.get('/search', auth, async (req, res) => {
             type: { $in: genre.toString().split(',') },
             year: { $in: yearRange }
         };
-        const filmsFromDb = await Film.find(findCondition).sort(sortCondition);
+        const filmsFromDb = await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit);
         if (filmsFromDb.length === 0) {
             const filmsFromApi = await parser.getSearch(name);
             filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
             // return res.json(filmsFromApi);
         }
-        return res.json(await Film.find(findCondition).sort(sortCondition));
+        return res.json(await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit));
     } catch (err) {
         await res.json({ msg: err.message });
     }
