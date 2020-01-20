@@ -9,7 +9,8 @@ const FilmSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     type: {
         type: [String],

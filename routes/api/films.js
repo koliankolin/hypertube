@@ -84,12 +84,13 @@ router.get('/id/:film_id', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/films/search?name=&genre=action,drama&yearPeriod=2010,2014
+// @route  GET api/films/search?name=matrix&sortBy=name&genre=action,drama&yearPeriod=2010,2014
 // @desc   Search film by name
 // @access Private
 router.get('/search', auth, async (req, res) => {
     try {
-        let { name, genre, yearPeriod }  = req.query;
+        let { name, sortBy, genre, yearPeriod }  = req.query;
+        sortBy = sortBy || 'name';
         let yearRange = Array();
         yearPeriod = yearPeriod.toString().split(',');
         const yearFrom = parseInt(yearPeriod[0]);
@@ -99,21 +100,21 @@ router.get('/search', auth, async (req, res) => {
         }
         const titleCondition = name ? { $regex: '.*' + name.toString() + '.*', $options: 'i' } : { $regex: '.*', $options: 'i' };
         console.log(genre.toString().split(','));
-        const filmsFromDb = await Film.find({
+        let sortCondition = {};
+        sortCondition[sortBy] = -1;
+
+        let findCondition = {
             title: titleCondition,
             type: { $in: genre.toString().split(',') },
             year: { $in: yearRange }
-        }).sort({ date: -1 });
+        };
+        const filmsFromDb = await Film.find(findCondition).sort(sortCondition);
         if (filmsFromDb.length === 0) {
             const filmsFromApi = await parser.getSearch(name);
             filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
             // return res.json(filmsFromApi);
         }
-        return res.json(await Film.find({
-            title: titleCondition,
-            // type: { $in: genre.toString().split(',') },
-            year: { $in: yearRange }
-        }).sort({ date: -1 }));
+        return res.json(await Film.find(findCondition).sort(sortCondition));
     } catch (err) {
         await res.json({ msg: err.message });
     }
