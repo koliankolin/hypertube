@@ -84,7 +84,7 @@ router.get('/id/:film_id', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/films/search?name=matrix&sortBy=name&genre=action,drama&yearPeriod=2010,2014&limit=50&page=1
+// @route  GET api/films/search?name=matrix&sortBy=name&sortOrder=-1&genre=action,drama&yearPeriod=2010,2014&limit=50&page=1
 // @desc   Search film by name
 // @access Private
 router.get('/search', auth, async (req, res) => {
@@ -104,7 +104,7 @@ router.get('/search', auth, async (req, res) => {
         const titleCondition = name ? { $regex: '.*' + name.toString() + '.*', $options: 'i' } : { $regex: '.*', $options: 'i' };
         console.log(genre.toString().split(','));
         let sortCondition = {};
-        sortCondition[sortBy] = -1;
+        sortCondition[sortBy] = parseInt(req.query.sortOrder);
 
         let findCondition = {
             title: titleCondition,
