@@ -97,7 +97,7 @@ router.get('/search', auth, async (req, res) => {
         let yearRange = Array();
         yearPeriod = yearPeriod.toString().split(',');
         const yearFrom = parseInt(yearPeriod[0]);
-        const yearTo = parseInt(yearPeriod[1]);
+        const yearTo = parseInt(yearPeriod[1]) || yearFrom;
         for (let i = yearFrom; i <= yearTo; i++) {
             yearRange.push(i);
         }
