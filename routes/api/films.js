@@ -84,26 +84,34 @@ router.get('/id/:film_id', auth, async (request, response) => {
     }
 });
 
-// @route  GET api/films/search?name=&genre=action,drama&yearPeriod=2010,2014
+// @route  GET api/films/search?name=matrix&sortBy=name&sortOrder=-1&genre=action,drama&yearPeriod=2010,2014&limit=50&page=1
 // @desc   Search film by name
 // @access Private
 router.get('/search', auth, async (req, res) => {
     try {
-        let { name, genre, yearPeriod }  = req.query;
+        const limit = parseInt(req.query.limit) || 50;
+        const page = parseInt(req.query.page) || 1;
+
+        let { name, sortBy, genre, yearPeriod }  = req.query;
+        sortBy = sortBy || 'name';
         let yearRange = Array();
         yearPeriod = yearPeriod.toString().split(',');
         const yearFrom = parseInt(yearPeriod[0]);
-        const yearTo = parseInt(yearPeriod[1]);
+        const yearTo = parseInt(yearPeriod[1]) || yearFrom;
         for (let i = yearFrom; i <= yearTo; i++) {
             yearRange.push(i);
         }
         const titleCondition = name ? { $regex: '.*' + name.toString() + '.*', $options: 'i' } : { $regex: '.*', $options: 'i' };
         console.log(genre.toString().split(','));
-        const filmsFromDb = await Film.find({
+        let sortCondition = {};
+        sortCondition[sortBy] = parseInt(req.query.sortOrder);
+
+        let findCondition = {
             title: titleCondition,
             type: { $in: genre.toString().split(',') },
             year: { $in: yearRange }
-        }).sort({ date: -1 });
+        };
+        const filmsFromDb = await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit);
         if (filmsFromDb.length === 0) {
             const filmsFromApi = await parser.getSearch(name);
             filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
