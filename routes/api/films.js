@@ -324,7 +324,7 @@ router.get('/genres', auth, (req, res) => {
 // @route  GET api/films/genres
 // @desc   Get all genres
 // @access Private
-router.get('/fields', auth, (req, res) => {
+router.get('/fieldsToSort', auth, (req, res) => {
     try {
         res.json([
             "date",
