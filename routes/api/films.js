@@ -118,12 +118,19 @@ router.get('/search', auth, async (req, res) => {
             findCondition['year'] = { $in: yearRange }
         }
         console.log(findCondition, sortCondition);
-        const filmsFromDb = await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit);
+        let filmsFromDb = await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit);
         console.log(filmsFromDb.length);
         if (filmsFromDb.length === 0) {
             const filmsFromApi = await parser.getSearch(name);
-            filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
-            // return res.json(filmsFromApi);
+            let filmsFromDb = Array();
+            for (let film of filmsFromApi) {
+                filmsFromDb.push(utilities.convertApiFilmToDbFilm(film));
+            }
+            // filmsFromDb = filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film));
+            for (let film of filmsFromDb) {
+                await film.save();
+            }
+            return res.json(filmsFromDb);
         }
         return await res.json(await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit));
     } catch (err) {
