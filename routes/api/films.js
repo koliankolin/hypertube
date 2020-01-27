@@ -125,7 +125,7 @@ router.get('/search', auth, async (req, res) => {
             filmsFromApi.forEach((film) => utilities.convertApiFilmToDbFilm(film).save());
             // return res.json(filmsFromApi);
         }
-        return res.json(await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit));
+        return await res.json(await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit));
     } catch (err) {
         await res.json({ msg: err.message });
     }
@@ -285,5 +285,56 @@ router.delete('/comment/:film_id/:comment_id', auth, async (req, res) => {
    }
 });
 
+// @route  GET api/films/genres
+// @desc   Get all genres
+// @access Private
+router.get('/genres', auth, (req, res) => {
+   try {
+       res.json([
+           "drama",
+           "mystery",
+           "sci-fi",
+           "thriller",
+           "action",
+           "romance",
+           "adventure",
+           "comedy",
+           "crime",
+           "fantasy",
+           "horror",
+           "animation",
+           "family",
+           "music",
+           "biography",
+           "western",
+           "musical",
+           "history",
+           "war",
+           "superhero",
+           "documentary",
+           "film-noir",
+           "sport"
+       ]);
+   } catch (err) {
+       console.error(err.message);
+       res.status(500).send('Server error');
+   }
+});
+
+// @route  GET api/films/genres
+// @desc   Get all genres
+// @access Private
+router.get('/fields', auth, (req, res) => {
+    try {
+        res.json([
+            "date",
+            "year",
+            "rating"
+        ]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
 
 module.exports = router;

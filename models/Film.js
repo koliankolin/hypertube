@@ -20,20 +20,8 @@ const FilmSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    rating: [
-        {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'users'
-            },
-            mark: {
-                type: Number,
-                required: true
-            }
-        }
-    ],
-    rating_imdb: {
-        type: String
+    rating: {
+        type: Number
     },
     description: {
         type: String,

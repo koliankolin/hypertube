@@ -122,7 +122,7 @@ module.exports.convertApiFilmToDbFilm = function (filmApi) {
         title: title,
         type: genre,
         year: year,
-        rating_imdb: ratings.Value,
+        rating: parseFloat(ratings[0].Value.split('/')[0]),
         description: synopsis,
         photo: image,
         torrents: torrents
