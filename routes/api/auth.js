@@ -8,6 +8,10 @@ const {check, validationResult} = require('express-validator');
 
 const User = require('../../models/User');
 
+const createToken = (user, local) => {
+    return jwt.sign({id: user._id, mail:user.email,local}, config.get('jwtSecret'), { expiresIn: '6h' })
+};
+
 // @route  GET api/auth
 // @desc   Get auth user
 // @access Public
@@ -52,25 +56,9 @@ router.post('/', [
             return response.status(400).json({ errors: [{msg: 'Invalid credentials'}] })
         }
 
+        const token = await createToken(user, false);
 
-        // Return jsonwebtoken
-        const payload = {
-            user: {
-                id: user.id
-            }
-        };
-
-        await jwt.sign(
-            payload,
-            config.get('jwtSecret'),
-            { expiresIn: 3600 },
-            (err, token) =>
-            {
-                if (err) throw err;
-                response.json({ token });
-            });
-
-        // response.send('User registered');
+        response.json({ token });
     } catch (err) {
         console.log(err.message);
         response.status(500).send('Server error');
