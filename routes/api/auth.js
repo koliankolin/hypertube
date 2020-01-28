@@ -5,12 +5,29 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const bcrypt = require('bcryptjs');
 const {check, validationResult} = require('express-validator');
+const passport =  require('passport');
 
 const User = require('../../models/User');
 
 const createToken = (user, local) => {
     return jwt.sign({id: user._id, mail:user.email,local}, config.get('jwtSecret'), { expiresIn: '6h' })
 };
+
+router.route('/42') //42 Auth
+    .get(passport.authenticate('42'));
+
+router.route('/42/callback')
+    .get(passport.authenticate('42', {failureRedirect: '/'}), (req, res) => {
+        res.redirect(`/token/${createToken(req.user, false)}`);
+    });
+
+router.route('/insta') //42 Auth
+    .get(passport.authenticate('instagram'));
+
+router.route('/insta/callback')
+    .get(passport.authenticate('42', {failureRedirect: '/'}), (req, res) => {
+        res.redirect(`/token/${createToken(req.user, false)}`);
+    });
 
 // @route  GET api/auth
 // @desc   Get auth user

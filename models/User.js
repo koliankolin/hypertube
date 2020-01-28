@@ -30,6 +30,12 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    fortyTwoId: {
+        type: String
+    },
+    instaId: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now
