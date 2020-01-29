@@ -25,7 +25,7 @@ router.route('/insta') //42 Auth
     .get(passport.authenticate('instagram'));
 
 router.route('/insta/callback')
-    .get(passport.authenticate('42', {failureRedirect: '/'}), (req, res) => {
+    .get(passport.authenticate('instagram', {failureRedirect: '/'}), (req, res) => {
         res.redirect('/');
     });
 
