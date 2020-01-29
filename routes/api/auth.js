@@ -73,9 +73,25 @@ router.post('/', [
             return response.status(400).json({ errors: [{msg: 'Invalid credentials'}] })
         }
 
-        const token = await createToken(user, false);
 
-        response.json({ token });
+        // Return jsonwebtoken
+        const payload = {
+            user: {
+                id: user.id
+            }
+        };
+
+        await jwt.sign(
+            payload,
+            config.get('jwtSecret'),
+            { expiresIn: 3600 },
+            (err, token) =>
+            {
+                if (err) throw err;
+                response.json({ token });
+            });
+
+        // response.send('User registered');
     } catch (err) {
         console.log(err.message);
         response.status(500).send('Server error');
