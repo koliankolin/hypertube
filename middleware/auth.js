@@ -49,6 +49,7 @@ passport.use(new FortyTwoStrategy({
             }).save();
             done(null, user);
         } catch (err) {
+            console.error(err.message);
             return done(null, false);
         }
     }
@@ -67,15 +68,14 @@ passport.use(new InstagramStrategy({
                 return done(null, existingUser);
             }
             const user = await new User({
-                login: profile._json.login,
-                firstName: profile._json.first_name,
-                lastName: profile._json.last_name,
-                email: profile._json.email,
-                avatar: profile._json.image_url,
-                instaId: profile._json.id,
+                firstName: profile._json.data.full_name,
+                login: profile._json.data.username,
+                avatar: profile._json.data.profile_picture,
+                instaId: profile._json.data.id
             }).save();
             done(null, user);
         } catch (err) {
+            console.error(err.message);
             return done(null, false);
         }
     }

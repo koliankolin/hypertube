@@ -107,7 +107,7 @@ module.exports.sendEmailRegister = async function (email, username) {
         text: `Hello ${username},\n`
             + "Click on this link or copy it in the search bar,\n"
             + "to connect and enjoy Hypertube!\n"
-            + `http://localhost:3000/activer/`
+            + `http://localhost:5000/activer/`
     }, (err, info) => {
         if (process.env.MODE === 'DEV')
             if (err)
