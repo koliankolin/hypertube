@@ -130,9 +130,10 @@ router.get('/search', auth, async (req, res) => {
             for (let film of filmsFromDb) {
                 await film.save();
             }
-            return res.json(filmsFromDb);
+            return res.json({count: filmsFromDb.length, films: filmsFromDb});
         }
-        return await res.json(await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit));
+        filmsFromDb = await Film.find(findCondition).sort(sortCondition).skip(limit * page).limit(limit);
+        return await res.json({count: filmsFromDb.length, films: filmsFromDb});
     } catch (err) {
         await res.json({ msg: err.message });
     }
