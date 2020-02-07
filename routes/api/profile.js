@@ -116,14 +116,17 @@ router.get('/:user_id', async (request, response) => {
 router.get('/login/:login', async (req, res) => {
     try {
         const login = req.params.login;
+        console.log(login);
         const user = await User.findOne({login: login});
 
         const profile = await Profile.findOne({user: user.id})
             .populate('user', ['firstName', 'lastName', 'login', 'avatar']);
         if (profile) {
             return res.json(profile);
+        } else if (user) {
+            return res.json(user);
         } else {
-            return res.json({ msg: 'User with that login not found' });
+            return res.json({ msg: "No user with such login" });
         }
     } catch (err) {
         res.json({ msg: err.message });
