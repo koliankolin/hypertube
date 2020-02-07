@@ -18,7 +18,7 @@ router.route('/42') //42 Auth
 
 router.route('/42/callback')
     .get(passport.authenticate('42', {failureRedirect: '/'}), (req, res) => {
-        res.redirect('/');
+        res.redirect(`/api/token/42/${createToken(req.user, false)}`);
     });
 
 router.route('/insta') //42 Auth
@@ -26,7 +26,7 @@ router.route('/insta') //42 Auth
 
 router.route('/insta/callback')
     .get(passport.authenticate('instagram', {failureRedirect: '/'}), (req, res) => {
-        res.redirect('/');
+        res.redirect(`/api/token/insta/${createToken(req.user, false)}`);
     });
 
 // @route  GET api/auth
