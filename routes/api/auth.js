@@ -10,7 +10,16 @@ const passport =  require('passport');
 const User = require('../../models/User');
 
 const createToken = (user, local) => {
-    return jwt.sign({id: user._id, mail:user.email,local}, config.get('jwtSecret'), { expiresIn: '6h' })
+    const payload = {
+        user: {
+            id: user.id
+        }
+    };
+    return jwt.sign(
+        payload,
+        config.get('jwtSecret'),
+        { expiresIn: 3600 }
+        )
 };
 
 router.route('/42') //42 Auth
