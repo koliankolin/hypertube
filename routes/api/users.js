@@ -132,7 +132,7 @@ router.post('/password/change', auth, async (req, res) => {
 // @route  POST api/users/password/email
 // @desc   Send email to change password
 // @access Private
-router.post('/password/email', [auth, sendEmailPassword], async (req, res) => {
+router.post('/password/email', sendEmailPassword, async (req, res) => {
     try {
         res.json({ status: "ok" });
     } catch (err) {
